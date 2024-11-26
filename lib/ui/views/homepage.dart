@@ -20,6 +20,11 @@ class HomepageView extends StatefulWidget {
 class _HomepageViewState extends State<HomepageView>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
+  Offset aboutMePosition = Offset(0, 0);
+  Offset whereIWorkPosition = Offset(50, 100);
+  Offset hobbiesPosition = Offset(200, 200);
+  Offset socialPosition = Offset(400, 50);
+
   @override
   void initState() {
     _animationController = AnimationController(vsync: this);
@@ -30,18 +35,206 @@ class _HomepageViewState extends State<HomepageView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black.withGreen(10),
+      backgroundColor: const Color(0xFF0A0A0A),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Stack(
           children: [
+            // Margins stay fixed
             topMargin(),
             leftMargin(context),
             rightMargin(context),
             bottomMargin(context),
+
+            // Scrollable content inside the margins
+            Positioned.fill(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 40, // Left margin width
+                  top: 40, // Top margin height
+                  bottom: 40, // Bottom margin height
+                  right: 0,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // First section
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height -
+                            80, // Subtract margins
+                        child: mainContent(),
+                      ),
+
+                      // Second section
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Your creative web developer",
+                            style: TextStyle(
+                              fontSize: 64,
+                              color: Colors.white,
+                              fontFamily: "NeuMachina",
+                              height: 1.1,
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+                          Container(
+                            height: 1000,
+                            width: double.infinity,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Positioned(
+                                  left: aboutMePosition.dx,
+                                  top: aboutMePosition.dy,
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Draggable(
+                                      feedback: aboutMeBox(),
+                                      childWhenDragging: Container(),
+                                      dragAnchorStrategy:
+                                          pointerDragAnchorStrategy,
+                                      feedbackOffset: Offset.zero,
+                                      onDragEnd: (details) {
+                                        setState(() {
+                                          aboutMePosition = Offset(
+                                            details.offset.dx,
+                                            details.offset.dy,
+                                          );
+                                        });
+                                      },
+                                      child: aboutMeBox(),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: whereIWorkPosition.dx,
+                                  top: whereIWorkPosition.dy,
+                                  child: Draggable(
+                                    feedback: whereIWorkBox(),
+                                    childWhenDragging: Container(),
+                                    dragAnchorStrategy:
+                                        pointerDragAnchorStrategy,
+                                    feedbackOffset: Offset.zero,
+                                    onDragEnd: (details) {
+                                      setState(() {
+                                        whereIWorkPosition = Offset(
+                                          details.offset.dx,
+                                          details.offset.dy,
+                                        );
+                                      });
+                                    },
+                                    child: whereIWorkBox(),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: hobbiesPosition.dx,
+                                  top: hobbiesPosition.dy,
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Draggable(
+                                      feedback: hobbiesBox(),
+                                      childWhenDragging: Container(),
+                                      dragAnchorStrategy:
+                                          pointerDragAnchorStrategy,
+                                      feedbackOffset: Offset.zero,
+                                      onDragEnd: (details) {
+                                        setState(() {
+                                          hobbiesPosition = Offset(
+                                            details.offset.dx,
+                                            details.offset.dy,
+                                          );
+                                        });
+                                      },
+                                      child: hobbiesBox(),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: socialPosition.dx,
+                                  top: socialPosition.dy,
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Draggable(
+                                      feedback: socialBox(),
+                                      childWhenDragging: Container(),
+                                      dragAnchorStrategy:
+                                          pointerDragAnchorStrategy,
+                                      feedbackOffset: Offset.zero,
+                                      onDragEnd: (details) {
+                                        setState(() {
+                                          socialPosition = Offset(
+                                            details.offset.dx,
+                                            details.offset.dy,
+                                          );
+                                        });
+                                      },
+                                      child: socialBox(),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 200),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget mainContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Spacer(),
+        SizedBox(
+          width: double.infinity,
+          child: Column(
+            children: [
+              Text(
+                "Hi, I'm Muhammed, a",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 64,
+                  color: Colors.white,
+                  fontFamily: "NeuMachina",
+                  height: 1.1,
+                ),
+              ),
+              Text(
+                "creative developer",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 64,
+                  color: const Color(0xFF4ADE80),
+                  fontFamily: "NeuMachina",
+                  height: 1.1,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                "I bring value to web development projects by merging\ntechnical expertise with creativity and aesthetics.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white.withOpacity(0.7),
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Spacer(),
+      ],
     );
   }
 
@@ -136,7 +329,7 @@ class _HomepageViewState extends State<HomepageView>
                                             : Colors.white.withOpacity(0.5),
                                         fontWeight: FontWeight.w500),
                                     child: const Text(
-                                      "India",
+                                      "I  ndia",
                                     ),
                                   ),
                                 ),
@@ -245,44 +438,32 @@ class _HomepageViewState extends State<HomepageView>
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          size: 20,
-          Icons.home_outlined,
-          color: Colors.white.withOpacity(0.4),
-        ),
-        const SizedBox(
-          height: 13,
-        ),
-        Icon(
-          size: 20,
-          Icons.person_outline,
-          color: Colors.white.withOpacity(0.4),
-        ),
-        const SizedBox(
-          height: 13,
-        ),
-        Icon(
-          Icons.laptop_chromebook_outlined,
-          size: 17,
-          color: Colors.white.withOpacity(0.4),
-        ),
-        const SizedBox(
-          height: 13,
-        ),
-        Icon(
-          size: 22,
-          Icons.bolt_outlined,
-          color: Colors.white.withOpacity(0.4),
-        ),
-        const SizedBox(
-          height: 13,
-        ),
-        Icon(
-          color: Colors.white.withOpacity(0.4),
-          Icons.mail_outline,
-          size: 18,
-        )
+        _buildMenuIcon(Icons.home_outlined),
+        _buildMenuIcon(Icons.person_outline),
+        _buildMenuIcon(Icons.laptop_chromebook_outlined, size: 17),
+        _buildMenuIcon(Icons.bolt_outlined),
+        _buildMenuIcon(Icons.mail_outline, size: 18),
       ],
+    );
+  }
+
+  Widget _buildMenuIcon(IconData icon, {double size = 20}) {
+    return Consumer<HomeViewModel>(
+      builder: (context, viewModel, _) => MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => viewModel.updateIconHover(icon, true),
+        onExit: (_) => viewModel.updateIconHover(icon, false),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6.5),
+          child: Icon(
+            icon,
+            size: size,
+            color: viewModel.isIconHovered(icon)
+                ? Colors.white
+                : Colors.white.withOpacity(0.4),
+          ),
+        ),
+      ),
     );
   }
 
@@ -403,6 +584,372 @@ class _HomepageViewState extends State<HomepageView>
             ),
           )
         ]),
+      ),
+    );
+  }
+
+  Widget aboutMeBox() {
+    return Container(
+      width: 600,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title bar
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white.withOpacity(0.1),
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  'about-me',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 14,
+                  ),
+                ),
+                const Spacer(),
+                // Window controls
+                Row(
+                  children: [
+                    Icon(Icons.remove,
+                        size: 16, color: Colors.white.withOpacity(0.7)),
+                    const SizedBox(width: 8),
+                    Icon(Icons.crop_square,
+                        size: 14, color: Colors.white.withOpacity(0.7)),
+                    const SizedBox(width: 8),
+                    Icon(Icons.close,
+                        size: 16, color: Colors.white.withOpacity(0.7)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 16,
+                      height: 1.6,
+                      color: Colors.white,
+                      fontFamily: 'NeuMachina',
+                    ),
+                    children: [
+                      const TextSpan(text: '1  Nice to meet you! I\'m '),
+                      TextSpan(
+                        text: 'Muhammed',
+                        style: TextStyle(color: Colors.green),
+                      ),
+                      const TextSpan(
+                          text: ', I\'m a Freelance Web Developer.\n'),
+                      const TextSpan(text: '2  I\'m passionate about both '),
+                      TextSpan(
+                          text: 'web ', style: TextStyle(color: Colors.blue)),
+                      TextSpan(
+                          text: 'design ',
+                          style: TextStyle(color: Colors.purple)),
+                      const TextSpan(text: 'and '),
+                      TextSpan(
+                          text: 'web ', style: TextStyle(color: Colors.blue)),
+                      TextSpan(
+                          text: 'development',
+                          style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget whereIWorkBox() {
+    return Container(
+      width: 600,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white.withOpacity(0.1),
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  'where-i-work',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 14,
+                  ),
+                ),
+                const Spacer(),
+                Row(
+                  children: [
+                    Icon(Icons.remove,
+                        size: 16, color: Colors.white.withOpacity(0.7)),
+                    const SizedBox(width: 8),
+                    Icon(Icons.crop_square,
+                        size: 14, color: Colors.white.withOpacity(0.7)),
+                    const SizedBox(width: 8),
+                    Icon(Icons.close,
+                        size: 16, color: Colors.white.withOpacity(0.7)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 16,
+                      height: 1.6,
+                      color: Colors.white,
+                      fontFamily: 'NeuMachina',
+                    ),
+                    children: [
+                      const TextSpan(text: '1  Based in '),
+                      TextSpan(
+                        text: 'Kochi, India',
+                        style: TextStyle(color: Colors.green),
+                      ),
+                      const TextSpan(text: '\n'),
+                      const TextSpan(text: '2  '),
+                      TextSpan(
+                        text: 'Remote collaborations',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      const TextSpan(text: ' accepted'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget hobbiesBox() {
+    return Container(
+      width: 300,
+      height: 300,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white.withOpacity(0.1),
+                ),
+              ),
+            ),
+            child: MouseRegion(
+              child: Row(
+                children: [
+                  Text(
+                    'hobbies',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 14,
+                    ),
+                  ),
+                  const Spacer(),
+                  Row(
+                    children: [
+                      Icon(Icons.remove,
+                          size: 16, color: Colors.white.withOpacity(0.7)),
+                      const SizedBox(width: 8),
+                      Icon(Icons.crop_square,
+                          size: 14, color: Colors.white.withOpacity(0.7)),
+                      const SizedBox(width: 8),
+                      Icon(Icons.close,
+                          size: 16, color: Colors.white.withOpacity(0.7)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 16,
+                      height: 1.6,
+                      color: Colors.white,
+                      fontFamily: 'NeuMachina',
+                    ),
+                    children: [
+                      TextSpan(
+                          text: '1  ', style: TextStyle(color: Colors.grey)),
+                      TextSpan(
+                          text: 'Photography',
+                          style: TextStyle(color: Colors.blue)),
+                      TextSpan(
+                          text: '\n2  ', style: TextStyle(color: Colors.grey)),
+                      TextSpan(
+                          text: 'Gaming',
+                          style: TextStyle(color: Colors.green)),
+                      TextSpan(
+                          text: '\n3  ', style: TextStyle(color: Colors.grey)),
+                      TextSpan(
+                          text: 'Music',
+                          style: TextStyle(color: Colors.purple)),
+                      TextSpan(
+                          text: '\n4  ', style: TextStyle(color: Colors.grey)),
+                      TextSpan(
+                          text: 'Traveling',
+                          style: TextStyle(color: Colors.orange)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget socialBox() {
+    return Container(
+      width: 300,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white.withOpacity(0.1),
+                ),
+              ),
+            ),
+            child: MouseRegion(
+              child: Row(
+                children: [
+                  Text(
+                    'me-online',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 14,
+                    ),
+                  ),
+                  const Spacer(),
+                  Row(
+                    children: [
+                      Icon(Icons.remove,
+                          size: 16, color: Colors.white.withOpacity(0.7)),
+                      const SizedBox(width: 8),
+                      Icon(Icons.crop_square,
+                          size: 14, color: Colors.white.withOpacity(0.7)),
+                      const SizedBox(width: 8),
+                      Icon(Icons.close,
+                          size: 16, color: Colors.white.withOpacity(0.7)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 16,
+                      height: 1.6,
+                      color: Colors.white,
+                      fontFamily: 'NeuMachina',
+                    ),
+                    children: [
+                      TextSpan(
+                          text: '1  ', style: TextStyle(color: Colors.grey)),
+                      TextSpan(
+                          text: 'Instagram',
+                          style: TextStyle(color: Colors.pink)),
+                      TextSpan(
+                          text: '\n2  ', style: TextStyle(color: Colors.grey)),
+                      TextSpan(
+                          text: 'Twitter',
+                          style: TextStyle(color: Colors.blue)),
+                      TextSpan(
+                          text: '\n3  ', style: TextStyle(color: Colors.grey)),
+                      TextSpan(
+                          text: 'Facebook',
+                          style: TextStyle(color: Colors.indigo)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

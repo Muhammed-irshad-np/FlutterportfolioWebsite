@@ -19,6 +19,15 @@ class HomeViewModel extends ChangeNotifier {
   bool _isCountryHover = false;
   late AnimationController animationController;
 
+  final Map<IconData, bool> _hoveredIcons = {};
+
+  bool isIconHovered(IconData icon) => _hoveredIcons[icon] ?? false;
+
+  void updateIconHover(IconData icon, bool isHovered) {
+    _hoveredIcons[icon] = isHovered;
+    notifyListeners();
+  }
+
   void updateToggleButton() {
     _toggleOnlineButton = !_toggleOnlineButton;
     notifyListeners();
