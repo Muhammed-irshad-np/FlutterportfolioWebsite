@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:myportfolio/ui/widgets/project_card.dart';
+import 'package:myportfolio/ui/widgets/testimonial_card.dart';
 import 'package:myportfolio/viewmodels/homeViewModel.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
@@ -24,6 +27,7 @@ class _HomepageViewState extends State<HomepageView>
   Offset whereIWorkPosition = Offset(50, 100);
   Offset hobbiesPosition = Offset(200, 200);
   Offset socialPosition = Offset(400, 50);
+  Offset dragOffset = Offset(0, 0);
 
   @override
   void initState() {
@@ -69,7 +73,7 @@ class _HomepageViewState extends State<HomepageView>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             "Your creative web developer",
                             style: TextStyle(
                               fontSize: 64,
@@ -111,27 +115,49 @@ class _HomepageViewState extends State<HomepageView>
                                 Positioned(
                                   left: whereIWorkPosition.dx,
                                   top: whereIWorkPosition.dy,
-                                  child: Draggable(
-                                    feedback: whereIWorkBox(),
-                                    childWhenDragging: Container(),
-                                    dragAnchorStrategy:
-                                        pointerDragAnchorStrategy,
-                                    feedbackOffset: Offset.zero,
-                                    onDragEnd: (details) {
-                                      setState(() {
-                                        whereIWorkPosition = Offset(
-                                          details.offset.dx,
-                                          details.offset.dy,
+                                  child: GestureDetector(
+                                    onTapDown: (_) {},
+                                    onTapUp: (_) {},
+                                    onTap: () {},
+                                    child: Draggable(
+                                      feedback: whereIWorkBox(),
+                                      childWhenDragging: Container(),
+                                      dragAnchorStrategy:
+                                          pointerDragAnchorStrategy,
+                                      feedbackOffset: Offset.zero,
+                                      onDragStarted: () {
+                                        RenderBox renderBox = context
+                                            .findRenderObject() as RenderBox;
+                                        final position = renderBox
+                                            .localToGlobal(Offset.zero);
+                                        dragOffset = Offset(
+                                          position.dx - whereIWorkPosition.dx,
+                                          position.dy - whereIWorkPosition.dy,
                                         );
-                                      });
-                                    },
-                                    child: whereIWorkBox(),
+                                      },
+                                      onDragUpdate: (details) {
+                                        setState(() {
+                                          RenderBox renderBox = context
+                                              .findRenderObject() as RenderBox;
+                                          var localPosition =
+                                              renderBox.globalToLocal(
+                                                  details.globalPosition);
+                                          whereIWorkPosition = Offset(
+                                            localPosition.dx - dragOffset.dx,
+                                            localPosition.dy - dragOffset.dy,
+                                          );
+                                        });
+                                      },
+                                      child: whereIWorkBox(),
+                                    ),
                                   ),
                                 ),
                                 Positioned(
                                   left: hobbiesPosition.dx,
                                   top: hobbiesPosition.dy,
                                   child: GestureDetector(
+                                    onTapDown: (_) {},
+                                    onTapUp: (_) {},
                                     onTap: () {},
                                     child: Draggable(
                                       feedback: hobbiesBox(),
@@ -139,12 +165,14 @@ class _HomepageViewState extends State<HomepageView>
                                       dragAnchorStrategy:
                                           pointerDragAnchorStrategy,
                                       feedbackOffset: Offset.zero,
-                                      onDragEnd: (details) {
+                                      onDragUpdate: (details) {
                                         setState(() {
-                                          hobbiesPosition = Offset(
-                                            details.offset.dx,
-                                            details.offset.dy,
-                                          );
+                                          RenderBox renderBox = context
+                                              .findRenderObject() as RenderBox;
+                                          var localPosition =
+                                              renderBox.globalToLocal(
+                                                  details.globalPosition);
+                                          hobbiesPosition = localPosition;
                                         });
                                       },
                                       child: hobbiesBox(),
@@ -177,7 +205,255 @@ class _HomepageViewState extends State<HomepageView>
                               ],
                             ),
                           ),
+                          const SizedBox(height: 40),
+                          Consumer<HomeViewModel>(
+                            builder: (context, viewModel, _) => MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              onEnter: (_) =>
+                                  viewModel.setAboutButtonHover(true),
+                              onExit: (_) =>
+                                  viewModel.setAboutButtonHover(false),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 32, vertical: 16),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.3),
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    // Animated background
+                                    Positioned.fill(
+                                      child: AnimatedOpacity(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        opacity: viewModel.isAboutButtonHovered
+                                            ? 1.0
+                                            : 0.0,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF4ADE80)
+                                                .withOpacity(0.2),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                        )
+                                            .animate(
+                                              target:
+                                                  viewModel.isAboutButtonHovered
+                                                      ? 1.0
+                                                      : 0.0,
+                                            )
+                                            .shimmer(
+                                              duration:
+                                                  const Duration(seconds: 2),
+                                              color: const Color(0xFF4ADE80)
+                                                  .withOpacity(0.3),
+                                            )
+                                            .fade(
+                                              duration: const Duration(
+                                                  milliseconds: 300),
+                                            ),
+                                      ),
+                                    ),
+                                    // Button content
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'about—me',
+                                          style: TextStyle(
+                                            color:
+                                                Colors.white.withOpacity(0.7),
+                                            fontSize: 16,
+                                            fontFamily: "NeuMachina",
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          transform: Matrix4.translationValues(
+                                            viewModel.isAboutButtonHovered
+                                                ? 4.0
+                                                : 0.0,
+                                            0.0,
+                                            0.0,
+                                          ),
+                                          child: Icon(
+                                            Icons.arrow_forward,
+                                            color:
+                                                Colors.white.withOpacity(0.7),
+                                            size: 20,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 200),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Projects Highlight Section
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Projects ",
+                                        style: TextStyle(
+                                          fontSize: 64,
+                                          color: Colors.white,
+                                          fontFamily: "NeuMachina",
+                                          height: 1.1,
+                                        ),
+                                      ),
+                                      Text(
+                                        "highlight",
+                                        style: TextStyle(
+                                          fontSize: 64,
+                                          color: const Color(0xFF4ADE80),
+                                          fontFamily: "NeuMachina",
+                                          height: 1.1,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 40),
+                                  // Project cards here
+                                  ProjectCard(
+                                    number: "01",
+                                    title: "Lorenzo Bocchi",
+                                    year: "2023",
+                                    tags: [
+                                      "webflow",
+                                      "gsap",
+                                      "javascript",
+                                      "css"
+                                    ],
+                                    works: 1,
+                                    awards: 4,
+                                  ),
+                                  const SizedBox(height: 200),
+                                ],
+                              ),
+
+                              // Nice things people say section
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Nice things ",
+                                    style: TextStyle(
+                                      fontSize: 64,
+                                      color: Colors.white,
+                                      fontFamily: "NeuMachina",
+                                      height: 1.1,
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "people say ",
+                                        style: TextStyle(
+                                          fontSize: 64,
+                                          color: const Color(0xFF4ADE80),
+                                          fontFamily: "NeuMachina",
+                                          height: 1.1,
+                                        ),
+                                      ),
+                                      Text(
+                                        "about my work",
+                                        style: TextStyle(
+                                          fontSize: 64,
+                                          color: Colors.white,
+                                          fontFamily: "NeuMachina",
+                                          height: 1.1,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 40),
+                                  // Testimonial cards here
+                                  TestimonialCard(),
+                                  const SizedBox(height: 200),
+                                ],
+                              ),
+
+                              // Let's work together section
+                              Container(
+                                padding: const EdgeInsets.all(40),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.1),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 30,
+                                          backgroundColor:
+                                              const Color(0xFF4ADE80),
+                                          child: Icon(Icons.waving_hand,
+                                              color: Colors.white),
+                                        ),
+                                        const SizedBox(width: 20),
+                                        Expanded(
+                                          child: Text(
+                                            "Let's work together on your next project",
+                                            style: TextStyle(
+                                              fontSize: 48,
+                                              color: Colors.white,
+                                              fontFamily: "NeuMachina",
+                                              height: 1.1,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 40),
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFF4ADE80),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 32, vertical: 16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        "let's-get-in-touch",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontFamily: "NeuMachina",
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 200),
+                            ],
+                          ),
                         ],
                       ),
                     ],

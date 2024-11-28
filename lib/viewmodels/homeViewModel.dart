@@ -60,4 +60,12 @@ class HomeViewModel extends ChangeNotifier {
     _iscodeblockHovered = value;
     notifyListeners();
   }
+
+  bool _isAboutButtonHovered = false;
+  bool get isAboutButtonHovered => _isAboutButtonHovered;
+
+  void setAboutButtonHover(bool value) {
+    _isAboutButtonHovered = value;
+    notifyListeners();
+  }
 }
